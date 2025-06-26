@@ -1,33 +1,68 @@
+<!-- menu.html -->
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>360 Photo Menu</title>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  </head>
-  <body>
-    <a-scene>
-      <a-entity camera look-controls position="0 1.6 4"></a-entity>
-      <a-entity id="menu"></a-entity>
-    </a-scene>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>360 Photo Menu</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+    }
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .thumb {
+      cursor: pointer;
+      border: 2px solid #444;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .thumb:hover {
+      transform: scale(1.05);
+      border-color: #0ff;
+    }
+    img {
+      display: block;
+      width: 300px;
+      height: 170px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <h1>Select a 360 Photo</h1>
+  <div class="gallery" id="gallery"></div>
 
-    <script>
-      fetch('dome/domes.json')
-        .then(response => response.json())
-        .then(images => {
-          const menu = document.getElementById('menu');
-          images.forEach((filename, index) => {
-            const x = (index - images.length / 2) * 2.5;
-            const imgEl = document.createElement('a-image');
-            imgEl.setAttribute('src', `dome/${filename}`);
-            imgEl.setAttribute('position', `${x} 1.6 -3`);
-            imgEl.setAttribute('width', '2');
-            imgEl.setAttribute('height', '1');
-            imgEl.setAttribute('class', 'clickable');
-            imgEl.setAttribute('event-set__click', `_target: window; _event: click; _value: location.href='dome.html#${filename}'`);
-            menu.appendChild(imgEl);
-          });
+  <script>
+    fetch('dome/domes.json')
+      .then(res => res.json())
+      .then(images => {
+        const gallery = document.getElementById('gallery');
+        images.forEach(filename => {
+          const link = document.createElement('a');
+          link.href = `dome.html#${filename}`;
+          link.className = 'thumb';
+          const img = document.createElement('img');
+          img.src = `dome/${filename}`;
+          img.alt = filename;
+          link.appendChild(img);
+          gallery.appendChild(link);
         });
-    </script>
-  </body>
+      })
+      .catch(err => {
+        document.getElementById('gallery').textContent = 'Failed to load images.';
+        console.error('Error loading domes.json:', err);
+      });
+  </script>
+</body>
 </html>
