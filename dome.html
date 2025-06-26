@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>360 Viewer</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script>
+      function getPhotoFromHash() {
+        const hash = window.location.hash.slice(1);
+        return hash || 'photo1.jpg';
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const src = 'dome/' + getPhotoFromHash();
+        document.querySelector('a-sky').setAttribute('src', src);
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene>
+      <a-sky color="#000000"></a-sky>
+      <a-entity camera look-controls position="0 1.6 0"></a-entity>
+    </a-scene>
+  </body>
+</html>
