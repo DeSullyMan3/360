@@ -1,0 +1,34 @@
+name: Update Domes
+
+on:
+  push:
+    paths:
+      - 'dome/**'    # Trigger on changes inside dome folder
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Generate domes.json
+        run: |
+          files=$(find dome -maxdepth 1 -type f -iname '*.jpg' -printf '%f\n' | sort)
+          json=$(printf '%s\n' "$files" | jq -R . | jq -s .)
+          echo $json > dome/domes.json
+          echo "Generated domes.json with files:"
+          cat dome/domes.json
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dome/domes.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update domes.json via GitHub Action"
+            git push
+          else
+            echo "No changes to commit"
+          fi
