@@ -11,14 +11,30 @@
       }
 
       document.addEventListener('DOMContentLoaded', () => {
-        const src = 'dome/' + getPhotoFromHash();
-        document.querySelector('a-sky').setAttribute('src', src);
+        const sky = document.querySelector('a-sky');
+        const filename = getPhotoFromHash();
+        const path = 'dome/' + filename;
+
+        const img = new Image();
+        img.onload = () => {
+          console.log('Loaded image:', path);
+          sky.setAttribute('src', path);
+          sky.components.material.material.needsUpdate = true;
+        };
+        img.onerror = () => {
+          sky.setAttribute('color', '#f00');
+          alert('Failed to load image: ' + path);
+        };
+        img.src = path;
+
+        // Optional test with a known 360 image (uncomment to test)
+        // sky.setAttribute('src', 'https://cdn.aframe.io/360-image-gallery-boilerplate/img/sechelt.jpg');
       });
     </script>
   </head>
   <body>
     <a-scene>
-      <a-sky color="#000000"></a-sky>
+      <a-sky></a-sky>
       <a-entity camera look-controls position="0 1.6 0"></a-entity>
     </a-scene>
   </body>
